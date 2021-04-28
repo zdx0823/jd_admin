@@ -15,5 +15,6 @@ Route::get('/confirm', 'StaticPageController@confirm')
     ->name('pageConfirm');
 
 Route::post('/confirm/send_code', 'SessionController@sendCode')->name('confirm_sendCode');
+Route::post('/confirm/confirm', 'SessionController@confirmCode')->name('confirm_confirm');
 
 Route::post('/logout/sso', 'SessionController@ssoLogout')->name('ssoLogout');

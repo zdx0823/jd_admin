@@ -1,6 +1,6 @@
 @php
 
-    $msg = isset($msg) ? $msg : null;
+    $msg = session()->get('msg');
 @endphp
 
 @extends('layouts.default')
@@ -37,8 +37,7 @@
         rounded-b-md border
         py-10
     ">
-        {{-- <form action="{{route('api_confirmCode')}}" method="POST"> --}}
-        <form action="" method="POST">
+        <form action="{{route('confirm_confirm')}}" method="POST">
 
             <div class="w-10/12 mx-auto h-full flex flex-col justify-start">
                 <div>
@@ -54,7 +53,7 @@
 
                     @include('blades.components.button', [
                         'type' => 'primary',
-                        'value' => '发送验证码 (1)',
+                        'value' => '发送验证码',
                         'jshook' => 'sendCodeBtn',
                     ])
 

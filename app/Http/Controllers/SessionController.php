@@ -97,6 +97,7 @@ class SendEmail {
 class SessionController extends Controller
 {
     public const SEND_CODE_SUCC = '验证码发送成功，请到邮箱查看';
+    public const CODE_ERR = '验证码错误或失效，请重新发送';
     
     public function ssoLogout () {
 
@@ -122,5 +123,78 @@ class SessionController extends Controller
         }
 
         return CustomCommon::makeSuccRes([], self::SEND_CODE_SUCC);
+    }
+
+
+    // 检查验证码是否正确
+    private static function checkCode () {
+
+        $userSid = config('custom.session.user_info');
+        $userInfo = session()->get($userSid);
+
+        if (isset($userInfo['code']) && time() < $userInfo['code']['timeout']) {
+            return true;
+        }
+
+        return false;
+    }
+    
+
+    // 生成临时token
+    private static function buildTmpToken () {
+
+        $token = CustomCommon::build_token();
+
+        $sid = config('custom.cookie.logged_tmp');
+        Cookie::queue($sid, $token);
+    }
+
+    
+    // 核实验证码
+    public function confirmCode (Request $request) {
+        
+        // 闪存原code值
+        session()->flash('code', $request->code);
+
+        // 验证值
+        $res = CustomCommon::validate($request->input(), [
+            'code' => 'bail|required|numeric'
+        ]);
+
+        // 格式错误
+        if ($res !== true) {
+
+            // 闪存错误值
+            session()->flash('msg', [
+                'type' => 'danger',
+                'msg' => $res['realMsg']
+            ]);
+            
+            // 返回
+            return back();
+        }
+
+        // 验证码错误或失效
+        if (!self::checkCode()) {
+
+            // 闪存错误值
+            session()->flash('msg', [
+                'type' => 'danger',
+                'msg' => self::CODE_ERR
+            ]);
+            
+            // 返回
+            return back();
+        }
+
+        // 正确，生成临时cookie，删掉验证码session
+        self::buildTmpToken();
+        $userSid = config('custom.session.user_info');
+        $userInfo = session()->get($userSid);
+        $userInfo['code'] = null;
+        session([$userSid => $userInfo]);
+
+        // 重定向回首页
+        return redirect()->route('pageIndex');
     }
 }
