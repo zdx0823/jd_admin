@@ -12,5 +12,13 @@ return [
 
     'session' => [
         'user_info' => env('SESSION_USER_INFO', env('APP_NAME') . 'session_user_info_key')
+    ],
+
+    'cookie' => [
+        'logged_tmp' => env('APP_NAME') . '_logged_tmp'
+    ],
+
+    'timeout' => [
+        'code' => env('TIMEOUT_CODE', 60)
     ]
 ];

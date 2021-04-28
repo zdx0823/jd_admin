@@ -12,6 +12,8 @@
 
     $name = isset($name) ? $name : 'default';
 
+    $jshook = isset($jshook) ? $jshook : 'undefined';
+
 @endphp
 
 <div class="flex h-12 divide-x border rounded-lg overflow-hidden">
@@ -29,6 +31,7 @@
             value="{{$value}}"
             placeholder="{{$placeholder}}"
             class="block text-gray-900 text-sm w-full h-full px-3 outline-none"
+            jshook="{{$jshook}}"
         >
     </div>
 </div>

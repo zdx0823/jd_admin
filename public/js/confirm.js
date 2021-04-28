@@ -1,5 +1,43 @@
 (self["webpackChunk"] = self["webpackChunk"] || []).push([["/js/confirm"],{
 
+/***/ "./resources/js/apiUrl.js":
+/*!********************************!*\
+  !*** ./resources/js/apiUrl.js ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+var prefix = 'http://localhost:8686';
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  'SEND_CODE': "".concat(prefix, "/api/send_code")
+});
+
+/***/ }),
+
+/***/ "./resources/js/common.js":
+/*!********************************!*\
+  !*** ./resources/js/common.js ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+
+var csrfToken = jquery__WEBPACK_IMPORTED_MODULE_0___default()('meta[name="csrf-token"]').attr('content');
+jquery__WEBPACK_IMPORTED_MODULE_0___default().ajaxSetup({
+  headers: {
+    'X-CSRF-TOKEN': csrfToken
+  }
+});
+
+/***/ }),
+
 /***/ "./resources/js/confirm.js":
 /*!*********************************!*\
   !*** ./resources/js/confirm.js ***!
@@ -9,12 +47,17 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util */ "./resources/js/util.js");
+/* harmony import */ var _apiUrl__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./apiUrl */ "./resources/js/apiUrl.js");
 var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 
 
+
+
+__webpack_require__(/*! ./common */ "./resources/js/common.js");
 /**
  * 显示php传递的msg数据
  */
+
 
 function msgPHP(util) {
   if (!window.PHP_DATA || !window.PHP_DATA.msg) return;
@@ -25,6 +68,21 @@ function msgPHP(util) {
 $(function () {
   // 显示php传递的提示
   msgPHP(_util__WEBPACK_IMPORTED_MODULE_0__.default);
+  var $code = $('[jshook=code]');
+  var $sendCodeBtn = $('[jshook=sendCodeBtn]');
+  $sendCodeBtn.on('click', function (e) {
+    $.post(_apiUrl__WEBPACK_IMPORTED_MODULE_1__.default.SEND_CODE).then(function (res) {
+      var _util$deJson = _util__WEBPACK_IMPORTED_MODULE_0__.default.deJson(res),
+          status = _util$deJson.status,
+          msg = _util$deJson.msg;
+
+      var toastType = status === 1 ? 'success' : 'danger';
+      _util__WEBPACK_IMPORTED_MODULE_0__.default.toast(toastType, msg);
+    });
+    e.preventDefault();
+    e.stopPropagation();
+  });
+  console.log($sendCodeBtn);
 });
 
 /***/ }),

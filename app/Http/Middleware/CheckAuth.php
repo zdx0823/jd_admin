@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Cookie;
 use Illuminate\Http\Request;
 
 use App\Custom\CheckLogin\CheckLogin;
@@ -53,16 +54,17 @@ class CheckAuth
         // 未登录，重定向到SSO
         if ($checkLoginRes === false) {
             $ssoLogin = config('custom.sso.login');
-            return \redirect()->away($ssoLogin);
+            $url = "$ssoLogin?serve=" . route('pageIndex');
+            return \redirect()->away($url);
         }
 
         // 已登录，是否有临时登录凭证
         $loggedTokenKey = \config('custom.cookie.logged_tmp');
 
         // 无凭证，返回邮箱验证码界面，二次验证
-        if (!cookie()->has($loggedTokenKey)) {
-            $authConfirm = config('custom.auth_confirm');
-            return \redirect($authConfirm);
+        if (Cookie::get($loggedTokenKey) == null) {
+
+            return \redirect()->route('pageConfirm');
         }
 
         // 有凭证，正常返回

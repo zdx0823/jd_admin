@@ -47,7 +47,8 @@
         rounded-b-md border
         py-10
     ">
-        <form action="{{route('api_confirmCode')}}" method="POST">
+        {{-- <form action="{{route('api_confirmCode')}}" method="POST"> --}}
+        <form action="" method="POST">
 
             <div class="w-10/12 mx-auto h-full flex flex-col justify-start">
                 <div>
@@ -55,6 +56,7 @@
                         'placeholder' => '请输入邮箱验证码',
                         'name' => 'code',
                         'value' => session('code'),
+                        'jshook' => 'code'
                     ])
                 </div>
                 
@@ -62,7 +64,8 @@
 
                     @include('blades.components.button', [
                         'type' => 'primary',
-                        'value' => '发送验证码 (1)'
+                        'value' => '发送验证码 (1)',
+                        'jshook' => 'sendCodeBtn',
                     ])
 
                     @include('blades.components.button', [

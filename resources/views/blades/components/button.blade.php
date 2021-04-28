@@ -35,6 +35,8 @@
 
     $submit = isset($submit) ? $submit : false;
 
+    $jshook = isset($jshook) ? $jshook : 'undefined';
+
 @endphp
 
 @if ($submit === true)
@@ -44,7 +46,7 @@
         rounded-sm
         {{$spacing}}
         {{$color}}
-    " type="submit" value="{{$value}}">
+    " type="submit" value="{{$value}}" jshook="{{$jshook}}">
 
 @else
 
@@ -53,7 +55,7 @@
         rounded-sm
         {{$spacing}}
         {{$color}}
-    ">
+    " jshook="{{$jshook}}">
         {{$value}}
     </button>
 @endif
