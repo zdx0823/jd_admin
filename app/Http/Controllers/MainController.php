@@ -8,7 +8,7 @@ class MainController extends Controller
 {
     
     private static function checkCode () {
-        return true;
+        return false;
     }
 
 

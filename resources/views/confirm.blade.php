@@ -1,12 +1,32 @@
+@php
+
+    // 是否有验证码错误提示语
+    if (count($errors->all()) > 0 || session('codeErr')) {
+        
+        $msg = [
+            'type' => 'danger',
+            'msg' => '验证码错误，请重新输入'
+        ];
+    }
+
+    $msg = isset($msg) ? $msg : null;
+
+@endphp
+
 @extends('layouts.default')
 @section('title', '邮箱验证')
+@section('js')
+<script>
+
+    window.PHP_DATA = {
+        'msg': @json($msg)
+    };
+
+</script>
+<script src="{{mix('js/confirm.js')}}"></script>
+@endsection
 
 @section('content')
-
-@if (count($errors->all()) > 0 || session('codeErr'))
-    
-    <p class="bg-orange-500 py-2 px-6 rounded-sm my-3 text-white">验证码错误，请重新填写</p>
-@endif
 
 
 <div class="w-full h-full bg-white flex flex-col py-20">
@@ -39,6 +59,12 @@
                 </div>
                 
                 <div class="mt-6 self-end">
+
+                    @include('blades.components.button', [
+                        'type' => 'primary',
+                        'value' => '发送验证码 (1)'
+                    ])
+
                     @include('blades.components.button', [
                         'type' => 'danger',
                         'value' => '确定',
