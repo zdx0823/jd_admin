@@ -6,11 +6,16 @@ use Closure;
 use Cookie;
 use Illuminate\Http\Request;
 
-use App\Custom\CheckLogin\CheckLogin;
+use App\Custom\CheckLogin\CheckLogin as tCheckLogin;
 use App\Custom\CheckSt\CheckSt;
 use App\Custom\Common\CustomCommon;
 
-class CheckAuth
+/**
+ * 检查权限
+ * 1. 是否已登录，未登录跳转到SSO进行登录
+ * 2. 已登录正常下一步
+ */
+class CheckLogin
 {
 
     /**
@@ -20,7 +25,7 @@ class CheckAuth
      */
     private static function checkLogin($request) {
 
-        if (CheckLogin::handle()) return true;
+        if (tCheckLogin::handle()) return true;
 
         // 未登录，验证ST
         if (CheckSt::handle($request)) {
@@ -58,16 +63,7 @@ class CheckAuth
             return \redirect()->away($url);
         }
 
-        // 已登录，是否有临时登录凭证
-        $loggedTokenKey = \config('custom.cookie.logged_tmp');
-
-        // 无凭证，返回邮箱验证码界面，二次验证
-        if (Cookie::get($loggedTokenKey) == null) {
-
-            return \redirect()->route('pageConfirm');
-        }
-
-        // 有凭证，正常返回
+        // 已登录，下一步
         return $next($request);
     }
 }

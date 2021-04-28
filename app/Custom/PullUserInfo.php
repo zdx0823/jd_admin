@@ -18,7 +18,7 @@ class PullUserInfo {
     /**
      * 向SSO拉取用户信息
      * 需要tgc作为参数发送请求
-     * 成功请求到数据将赋值到session，session的key是tgc，值就是数据
+     * 成功请求到数据将赋值到session，session的key是custom.session.user_info，值就是数据
      */
     private static function pullUserInfo () {
 
@@ -40,7 +40,8 @@ class PullUserInfo {
         $userSessionKey = config('custom.session.user_info');
         session([ $userSessionKey => [
             'id' => $userInfo['id'],
-            'username' => $userInfo['username']
+            'username' => $userInfo['username'],
+            'email' => $userInfo['email'],
         ] ]);
 
         return true;

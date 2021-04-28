@@ -19,6 +19,6 @@ return [
     ],
 
     'timeout' => [
-        'code' => env('TIMEOUT_CODE', 60)
+        'code' => env('TIMEOUT_EMAIL_CODE', 60)
     ]
 ];

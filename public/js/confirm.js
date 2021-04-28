@@ -13,7 +13,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 var prefix = 'http://localhost:8686';
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  'SEND_CODE': "".concat(prefix, "/api/send_code")
+  'SEND_CODE': "".concat(prefix, "/confirm/send_code")
 });
 
 /***/ }),
@@ -48,6 +48,12 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default().ajaxSetup({
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util */ "./resources/js/util.js");
 /* harmony import */ var _apiUrl__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./apiUrl */ "./resources/js/apiUrl.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
 var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 
 
@@ -65,24 +71,109 @@ function msgPHP(util) {
   util.toast(data.msg, data.type);
 }
 
+var SendCode = /*#__PURE__*/function () {
+  function SendCode() {
+    _classCallCheck(this, SendCode);
+
+    var $btn = $('[jshook=sendCodeBtn]');
+    this.timeout = 0;
+    this.countDownTimer = null;
+    this.curCountDown = 0;
+    $btn.html(SendCode.label);
+    this.bind($btn);
+  } // 发送请求
+
+
+  _createClass(SendCode, [{
+    key: "send",
+    value: function send() {
+      $.post(_apiUrl__WEBPACK_IMPORTED_MODULE_1__.default.SEND_CODE).then(function (res) {
+        var _util$deJson = _util__WEBPACK_IMPORTED_MODULE_0__.default.deJson(res),
+            status = _util$deJson.status,
+            msg = _util$deJson.msg,
+            realMsg = _util$deJson.realMsg;
+
+        if (status === 1) {
+          _util__WEBPACK_IMPORTED_MODULE_0__.default.toast(msg, 'success');
+        } else {
+          _util__WEBPACK_IMPORTED_MODULE_0__.default.toast(realMsg, 'danger');
+        }
+      });
+    } // 绑定事件
+
+  }, {
+    key: "bind",
+    value: function bind($btn) {
+      var _this = this;
+
+      $btn.on('click', function (e) {
+        e.preventDefault();
+        if (Date.now() < _this.timeout) return;
+
+        _this.countDown($btn);
+
+        _this.timeout = Date.now() + SendCode.timeout * 1000;
+
+        _this.send();
+      });
+    } // 按钮倒计时
+
+  }, {
+    key: "countDown",
+    value: function countDown($btn) {
+      var _this2 = this;
+
+      this.curCountDown = SendCode.timeout;
+      $btn.html("".concat(SendCode.label, " (").concat(SendCode.timeout, ")"));
+      this.disableCss($btn);
+      clearInterval(this.countDownTimer);
+      this.countDownTimer = setInterval(function () {
+        var n = _this2.curCountDown - 1;
+        _this2.curCountDown = n;
+
+        if (n === 0) {
+          clearInterval(_this2.countDownTimer);
+          $btn.html(SendCode.label);
+
+          _this2.usableCss($btn);
+
+          return;
+        }
+
+        $btn.html("".concat(SendCode.label, " (").concat(n, ")"));
+      }, 1000);
+    }
+  }, {
+    key: "disableCss",
+    value: function disableCss($btn) {
+      console.log($btn);
+      $btn.removeClass('hover:bg-blue-600');
+      $btn.removeClass('bg-blue-500');
+      $btn.removeClass('cursor-default');
+      $btn.addClass('bg-gray-500');
+      $btn.addClass('cursor-not-allowed');
+    }
+  }, {
+    key: "usableCss",
+    value: function usableCss($btn) {
+      $btn.addClass('bg-blue-500');
+      $btn.addClass('hover:bg-blue-600');
+      $btn.addClass('cursor-default');
+      $btn.removeClass('bg-gray-500');
+      $btn.removeClass('cursor-not-allowed');
+    }
+  }]);
+
+  return SendCode;
+}();
+
+SendCode.timeout = 60;
+SendCode.label = '发送验证码';
 $(function () {
   // 显示php传递的提示
   msgPHP(_util__WEBPACK_IMPORTED_MODULE_0__.default);
   var $code = $('[jshook=code]');
-  var $sendCodeBtn = $('[jshook=sendCodeBtn]');
-  $sendCodeBtn.on('click', function (e) {
-    $.post(_apiUrl__WEBPACK_IMPORTED_MODULE_1__.default.SEND_CODE).then(function (res) {
-      var _util$deJson = _util__WEBPACK_IMPORTED_MODULE_0__.default.deJson(res),
-          status = _util$deJson.status,
-          msg = _util$deJson.msg;
-
-      var toastType = status === 1 ? 'success' : 'danger';
-      _util__WEBPACK_IMPORTED_MODULE_0__.default.toast(toastType, msg);
-    });
-    e.preventDefault();
-    e.stopPropagation();
-  });
-  console.log($sendCodeBtn);
+  new SendCode();
 });
 
 /***/ }),

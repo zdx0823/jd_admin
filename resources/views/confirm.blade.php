@@ -1,16 +1,6 @@
 @php
 
-    // 是否有验证码错误提示语
-    if (count($errors->all()) > 0 || session('codeErr')) {
-        
-        $msg = [
-            'type' => 'danger',
-            'msg' => '验证码错误，请重新输入'
-        ];
-    }
-
     $msg = isset($msg) ? $msg : null;
-
 @endphp
 
 @extends('layouts.default')
@@ -37,7 +27,7 @@
         text-gray-900 text-center text-sm font-extrabold
         h-10 leading-10
         border rounded-t-md
-    ">请输入邮箱验证码</div>
+    ">需要二次认证，请输入邮箱验证码</div>
 
     {{-- 内容 --}}
     <div class="

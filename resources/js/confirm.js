@@ -16,28 +16,106 @@ function msgPHP (util) {
 }
 
 
+class SendCode {
+
+    constructor () {
+
+        const $btn = $('[jshook=sendCodeBtn]');
+        this.timeout = 0
+        this.countDownTimer = null
+        this.curCountDown = 0
+
+        $btn.html(SendCode.label)
+        this.bind($btn)
+    }
+
+    // 发送请求
+    send () {
+       
+        $.post(apiUrl.SEND_CODE).then(res => {
+            const {status, msg, realMsg} = util.deJson(res)
+
+            if (status === 1) {
+
+                util.toast(msg, 'success')
+            } else {
+
+                util.toast(realMsg, 'danger')
+            }
+        }) 
+    }
+
+
+    // 绑定事件
+    bind ($btn) {
+        
+        $btn.on('click', (e) => {
+
+            e.preventDefault()
+            if (Date.now() < this.timeout) return
+
+            this.countDown($btn)
+            this.timeout = Date.now() + (SendCode.timeout * 1000)
+            this.send()
+        })
+    }
+
+
+    // 按钮倒计时
+    countDown ($btn) {
+
+        this.curCountDown = SendCode.timeout
+        $btn.html(`${SendCode.label} (${SendCode.timeout})`)
+        this.disableCss($btn)
+
+        clearInterval(this.countDownTimer)
+        this.countDownTimer = setInterval(() => {
+
+            let n = this.curCountDown - 1 
+            this.curCountDown = n        
+            if (n === 0) {
+                clearInterval(this.countDownTimer)
+                $btn.html(SendCode.label)
+                this.usableCss($btn)
+                return
+            }
+
+            $btn.html(`${SendCode.label} (${n})`)
+        }, 1000)
+    }
+
+
+    disableCss ($btn) {
+        console.log($btn);
+        $btn.removeClass('hover:bg-blue-600')
+        $btn.removeClass('bg-blue-500')
+        $btn.removeClass('cursor-default')
+        $btn.addClass('bg-gray-500')
+        $btn.addClass('cursor-not-allowed')
+    }
+
+
+    usableCss ($btn) {
+        $btn.addClass('bg-blue-500')
+        $btn.addClass('hover:bg-blue-600')
+        $btn.addClass('cursor-default')
+        $btn.removeClass('bg-gray-500')
+        $btn.removeClass('cursor-not-allowed')
+    }
+}
+SendCode.timeout = 60
+SendCode.label = '发送验证码'
+
+
+
+
 $(() => {
 
     // 显示php传递的提示
     msgPHP(util)
 
     let $code = $('[jshook=code]');
-    let $sendCodeBtn = $('[jshook=sendCodeBtn]');
 
-    $sendCodeBtn.on('click', function (e) {
-
-
-        $.post(apiUrl.SEND_CODE).then(res => {
-            const {status, msg} = util.deJson(res)
-
-            let toastType = status === 1 ? 'success' : 'danger'
-            util.toast(toastType, msg)
-        })
-
-        e.preventDefault()
-        e.stopPropagation()
-    })
-
-    console.log($sendCodeBtn);
+    new SendCode()
 
 })
