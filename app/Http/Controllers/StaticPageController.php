@@ -11,4 +11,11 @@ class StaticPageController extends Controller
         return view('test');
     }
 
+
+    public function index (Request $request) {
+
+        return view('index');
+
+    }
+
 }
