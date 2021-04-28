@@ -3,6 +3,4 @@
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/', function () {
-    return 233;
-});
+Route::get('/test', 'StaticPageController@test');
