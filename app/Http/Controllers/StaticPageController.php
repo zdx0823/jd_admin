@@ -18,4 +18,11 @@ class StaticPageController extends Controller
 
     }
 
+
+    public function confirm (Request $request) {
+
+        return view('confirm');
+
+    }
+
 }
