@@ -65,7 +65,6 @@ class Kernel extends HttpKernel
         
         'checkLogin' => \App\Http\Middleware\CheckLogin::class,
         'checkTmpToken' => \App\Http\Middleware\CheckTmpToken::class,
-        'pullUserInfo' => \App\Http\Middleware\PullUserInfo::class,
         'checkParams' => \App\Http\Middleware\CheckParams::class,
     ];
 }

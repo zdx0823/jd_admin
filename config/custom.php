@@ -20,5 +20,7 @@ return [
 
     'timeout' => [
         'code' => env('TIMEOUT_EMAIL_CODE', 60)
-    ]
+    ],
+
+    'admin_level' => env('ADMIN_LEVEL')
 ];

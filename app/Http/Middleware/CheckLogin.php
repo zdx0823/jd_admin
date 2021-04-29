@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Custom\CheckLogin\CheckLogin as tCheckLogin;
 use App\Custom\CheckSt\CheckSt;
 use App\Custom\Common\CustomCommon;
+use App\Custom\PullUserInfo\PullUserInfo;
 
 /**
  * 检查权限
@@ -44,17 +45,29 @@ class CheckLogin
         return false;
     }
 
+
+    /**
+     * 登录用户是否有管理员权限
+     */
+    private static function isAdmin () {
+
+        return false;
+        $userSid = \config('custom.session.user_info');
+        $userInfo = \session()->get($userSid);
+
+        $level = config('custom.admin_level');
+
+        if ($userInfo['level'] === $level) return true;
+
+        return false;
+    }
+
     
     public function handle(Request $request, Closure $next)
     {
 
         // 是否登录
         $checkLoginRes = self::checkLogin($request);
-
-        // 返回重定向链接
-        if (is_string($checkLoginRes)) {
-            return \redirect($checkLoginRes);
-        }
 
         // 未登录，重定向到SSO
         if ($checkLoginRes === false) {
@@ -63,7 +76,22 @@ class CheckLogin
             return \redirect()->away($url);
         }
 
-        // 已登录，下一步
+        // 拉取用户信息
+        PullUserInfo::handle();
+
+        // 已登录：是否有管理员权限
+        if (!self::isAdmin()) {
+
+            return \redirect()->route('forbidden');
+        }
+
+        // 有权限：返回已登录的重定向链接
+        if (is_string($checkLoginRes)) {
+
+            return \redirect($checkLoginRes);
+        }
+
+        // 有权限：下一步
         return $next($request);
     }
 }

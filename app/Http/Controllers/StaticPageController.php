@@ -25,4 +25,11 @@ class StaticPageController extends Controller
 
     }
 
+
+    public function forbidden (Request $request) {
+
+        return view('forbidden');
+
+    }
+
 }
