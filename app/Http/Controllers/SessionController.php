@@ -99,7 +99,7 @@ class SessionController extends Controller
     public const SEND_CODE_SUCC = '验证码发送成功，请到邮箱查看';
     public const CODE_ERR = '验证码错误或失效，请重新发送';
     
-    public function ssoLogout () {
+    public function ssoLogout (Request $request) {
 
         // 登出
         CustomCommon::ssoLogout($request);
