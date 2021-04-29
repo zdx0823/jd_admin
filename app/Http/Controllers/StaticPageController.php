@@ -16,7 +16,8 @@ class StaticPageController extends Controller
 
     public function index (Request $request) {
 
-        return view('index');
+        $isLogged = $request->isLogged;
+        return view('index', compact('isLogged'));
 
     }
 
@@ -30,14 +31,16 @@ class StaticPageController extends Controller
             return \redirect()->route('pageIndex');
         }
 
-        return view('confirm');
+        $isLogged = $request->isLogged;
+        return view('confirm', compact('isLogged'));
 
     }
 
 
     public function forbidden (Request $request) {
 
-        return view('forbidden');
+        $isLogged = $request->isLogged;
+        return view('forbidden', compact('isLogged'));
 
     }
 

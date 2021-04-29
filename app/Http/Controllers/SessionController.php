@@ -197,4 +197,17 @@ class SessionController extends Controller
         // 重定向回首页
         return redirect()->route('pageIndex');
     }
+
+
+    // 登出
+    public function logout (Request $request) {
+
+        $tgc = Cookie::get('tgc');
+        Cookie::queue(Cookie::forget('tgc'));
+        Session::forget('tgc');
+
+        $ssoLogoutUrl = config('custom.sso.logout') . "?tgc=$tgc";
+
+        return redirect()->away($ssoLogoutUrl);
+    }
 }

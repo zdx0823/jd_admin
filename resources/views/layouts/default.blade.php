@@ -23,9 +23,23 @@
     <div class=" h-32 border-b bg-white">
         
         {{-- logo，标题 --}}
-        <div class="w-10/12 h-full mx-auto flex items-center justify-start">
-            <a href="" class="logo">京东</a>
-            <span class="text-lg font-extrabold text-gray-800 self-end mb-4">@yield('title', '管理员后台')</span>
+        <div class="w-10/12 h-full mx-auto flex justify-between">
+            <div class="flex items-center">
+                <a href="" class="logo">京东</a>
+                <span class="text-lg font-extrabold text-gray-800 self-end mb-4">@yield('title', '管理员后台')</span>
+            </div>
+            @if (isset($isLogged) && $isLogged === true)
+                
+                <div class="self-end mb-3">
+                    <a href="{{route('logout')}}">
+                        
+                        @include('blades.components.button', [
+                            'value' => '退出登录',
+                            'type' => 'primary',
+                        ])
+                    </a>
+                </div>
+            @endif
         </div>
 
     </div>

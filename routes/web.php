@@ -17,6 +17,7 @@ Route::get('/confirm', 'StaticPageController@confirm')
 Route::post('/confirm/send_code', 'SessionController@sendCode')->name('confirm_sendCode');
 Route::post('/confirm/confirm', 'SessionController@confirmCode')->name('confirm_confirm');
 
+Route::get('/logout', 'SessionController@logout')->name('logout');
 Route::post('/logout/sso', 'SessionController@ssoLogout')->name('ssoLogout');
 
 // 无权限界面

@@ -28,11 +28,15 @@ class CheckLogin
      * 3-2. st无效，返回false
      * 
      * 返回 false 或重定向链接
-     * 副作用：添加一个Cookie队列
+     * 副作用：添加若干个Cookie队列
      */
-    private static function checkLogin($request) {
+    public static function checkLogin($request) {
 
         if (tCheckLogin::handle()) return true;
+
+        // 未登录，删掉临时凭证
+        $loggedTmpKey = config('custom.cookie.logged_tmp');
+        Cookie::queue(Cookie::forget($loggedTmpKey));
 
         // 未登录，验证ST
         if (CheckSt::handle($request)) {
@@ -74,6 +78,9 @@ class CheckLogin
             $url = "$ssoLogin?serve=" . route('pageIndex');
             return \redirect()->away($url);
         }
+
+        // 已登录：$request->isLogged = true
+        $request->isLogged = true;
 
         // 返回链接，重定向，生成cookie
         if (is_string($checkLoginRes)) {
