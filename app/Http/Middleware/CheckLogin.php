@@ -21,8 +21,14 @@ class CheckLogin
 
     /**
      * 是否登录，未登录是否有st
-     * 已登录返回true，st验证成功返回重定向链接
-     * 未登录，且st无效返回false
+     * 1. 已登录返回true
+     * 2. 未登录，返回false
+     * 3. 未登录，有st
+     * 3-1. st有效，添加Cookie队列，返回重定向链接
+     * 3-2. st无效，返回false
+     * 
+     * 返回 false 或重定向链接
+     * 副作用：添加一个Cookie队列
      */
     private static function checkLogin($request) {
 
@@ -49,16 +55,9 @@ class CheckLogin
     /**
      * 登录用户是否有管理员权限
      */
-    private static function isAdmin () {
+    private static function isAdmin ($userInfo) {
 
-        return false;
-        $userSid = \config('custom.session.user_info');
-        $userInfo = \session()->get($userSid);
-
-        $level = config('custom.admin_level');
-
-        if ($userInfo['level'] === $level) return true;
-
+        if ($userInfo['isAdmin'] === true) return true;
         return false;
     }
 
@@ -76,19 +75,19 @@ class CheckLogin
             return \redirect()->away($url);
         }
 
-        // 拉取用户信息
-        PullUserInfo::handle();
-
-        // 已登录：是否有管理员权限
-        if (!self::isAdmin()) {
-
-            return \redirect()->route('forbidden');
-        }
-
-        // 有权限：返回已登录的重定向链接
+        // 返回链接，重定向，生成cookie
         if (is_string($checkLoginRes)) {
 
             return \redirect($checkLoginRes);
+        }
+
+        // 拉取用户信息
+        $userInfo = PullUserInfo::handle();
+
+        // 已登录：是否有管理员权限
+        if (!self::isAdmin($userInfo)) {
+
+            return \redirect()->route('forbidden');
         }
 
         // 有权限：下一步
