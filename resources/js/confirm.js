@@ -102,6 +102,15 @@ class SendCode {
         $btn.removeClass('bg-gray-500')
         $btn.removeClass('cursor-not-allowed')
     }
+
+
+    /**
+     * 主动发起请求
+     */
+    do () {
+        const $btn = $('[jshook=sendCodeBtn]');
+        $btn.click()
+    }
 }
 SendCode.timeout = 60
 SendCode.label = '发送验证码'
@@ -116,6 +125,7 @@ $(() => {
 
     let $code = $('[jshook=code]');
 
-    new SendCode()
+    const sendCodeIns = new SendCode()
+    sendCodeIns.do()
 
 })

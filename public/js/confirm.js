@@ -162,6 +162,16 @@ var SendCode = /*#__PURE__*/function () {
       $btn.removeClass('bg-gray-500');
       $btn.removeClass('cursor-not-allowed');
     }
+    /**
+     * 主动发起请求
+     */
+
+  }, {
+    key: "do",
+    value: function _do() {
+      var $btn = $('[jshook=sendCodeBtn]');
+      $btn.click();
+    }
   }]);
 
   return SendCode;
@@ -173,7 +183,8 @@ $(function () {
   // 显示php传递的提示
   msgPHP(_util__WEBPACK_IMPORTED_MODULE_0__.default);
   var $code = $('[jshook=code]');
-  new SendCode();
+  var sendCodeIns = new SendCode();
+  sendCodeIns["do"]();
 });
 
 /***/ }),
